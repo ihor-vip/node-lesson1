@@ -1,32 +1,33 @@
-const DB = require("../dataBase/users");
+const User = require("../dataBase/User.model");
 
 module.exports = {
-    getAllUsers: (req, res) => {
+    getAllUsers: async (req, res) => {
         try {
-            res.json(DB)
+            const users = await User.find()
+            res.json(users)
         } catch (e) {
             res.json(e)
         }
     },
 
-    createUser: (req, res) => {
+    createUser: async (req, res) => {
         try {
-            DB.push(req.body)
-            res.json(DB)
+            const createdUser = await User.create(req.body)
+            res.status(201).json(createdUser)
         } catch (e) {
             res.json(e)
         }
     },
 
-    getUserById: (req, res) => {
+    getUserById: async (req, res) => {
         try {
             const {userIndex} = req.params
-            const user = DB[userIndex]
+            const user = await User.findById(userIndex)
 
             if (!user) {
-                throw new Error('Not found')
+                res.status(404).json(`User with id ${userIndex} not found`)
+                return;
             }
-
             res.json(user)
         } catch (e) {
             res.json(e)

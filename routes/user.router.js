@@ -5,12 +5,14 @@ const {
     getAllUsers,
     getUserById
 } = require("../controllers/user.controller");
+const {checkIsEmailDuplicate} = require('../middlewares/user.middlewares')
+
 
 const userRouter = Router()
 
 userRouter.get('/', getAllUsers)
 
-userRouter.post('/', createUser)
+userRouter.post('/',checkIsEmailDuplicate, createUser)
 
 userRouter.get('/:userIndex', getUserById)
 
