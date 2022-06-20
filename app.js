@@ -1,10 +1,14 @@
 const express = require('express')
 const {engine} = require('express-handlebars')
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 
-const {PORT} = require('./config/config')
+dotenv.config()
+
+const {PORT, MONGO_URL} = require('./config/config')
 const userRouter = require('./routes/user.router')
 const reportRouter = require('./routes/report.router')
+const ApiError = require('./error/ApiError')
 
 const app = express()
 
@@ -15,22 +19,30 @@ app.engine('.hbs', engine({defaultLayout: false}));
 app.set('view engine', '.hbs');
 app.set('views', './static');
 
-mongoose.connect('mongodb://localhost:27017/hebron').then(() => {
-    console.log('Connection success')
+mongoose.connect(MONGO_URL).then(() => {
+  console.log('Connection success')
 })
 
-app.use('/users', userRouter)
 app.use('/reports', reportRouter)
+app.use('/users', userRouter)
+app.use('*', _notFoundHandler)
+app.use(_mainErrorHandler)
 
-app.use('*', (err,req,res,next) => {
+function _notFoundHandler(req, res, next) {
+  next (new ApiError('Not Found', 404))
+}
 
-})
-
+function _mainErrorHandler(err,req,res,next) {
+  res
+    .status(err.status || 500)
+    .json({
+      message: err.message || 'Server error',
+      status: err.status
+    })
+}
 
 app.listen(PORT, () => {
-    console.log(`App listen port ${PORT}`)
+  console.log(`App listen port ${PORT}`)
 })
-
-
 
 

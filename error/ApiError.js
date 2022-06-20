@@ -1,10 +1,10 @@
 class ApiError extends Error {
-    constructor(message, code) {
-        super(message)
-        this.code = code
+  constructor(message, code) {
+    super(message)
+    this.code = code
 
-        Error.captureStackTrace(this, this.constructor)
-    }
+    Error.captureStackTrace(this, this.constructor)
+  }
 }
 
 module.exports= ApiError
