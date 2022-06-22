@@ -6,8 +6,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const {PORT, MONGO_URL} = require('./config/config')
-const userRouter = require('./routes/user.router')
-const reportRouter = require('./routes/report.router')
+const {reportRouter,userRouter} = require('./routes')
 const ApiError = require('./error/ApiError')
 
 const app = express()
@@ -32,7 +31,7 @@ function _notFoundHandler(req, res, next) {
   next (new ApiError('Not Found', 404))
 }
 
-function _mainErrorHandler(err,req,res,next) {
+function _mainErrorHandler(err,req,res) {
   res
     .status(err.status || 500)
     .json({

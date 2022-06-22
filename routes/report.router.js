@@ -1,8 +1,8 @@
 const {Router} = require('express')
-const {getReports} = require('../controllers/report.controller')
+const {reportController} = require("../controllers");
 
 const reportRouter = Router()
 
-reportRouter.get('/', getReports)
+reportRouter.get('/', reportController.getReports )
 
 module.exports = reportRouter;

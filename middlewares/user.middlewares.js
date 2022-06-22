@@ -1,13 +1,14 @@
 const User = require('../dataBase/User.model')
 const ApiError = require('../error/ApiError')
-const {getUserById} = require("../controllers/user.controller");
+const {CURRENT_YEAR} = require("../constants/constants");
+const {userValidator} = require('../validators')
 
 const checkIsEmailDuplicate = async (req, res, next) => {
   try{
-    const {email = ''} = req.body
+    const {email, year} = req.body
 
-    if (!email) {
-      next( new ApiError('Email is required', 400))
+    if (year < CURRENT_YEAR - 100 || year > CURRENT_YEAR) {
+      next( new ApiError('Not valid year', 404))
       return
     }
 
@@ -41,7 +42,22 @@ const checkIsUserPresent = async (req, res, next) => {
   }
 }
 
+const newUserValidator = (req, res, next) => {
+  try{
+    const {error} = userValidator.newUserJoiSchema.validate(req.body)
+
+    if (error) {
+      next(new ApiError(error.details[0].message, 400))
+      return
+    }
+    next()
+  } catch (e) {
+
+  }
+}
+
 module.exports = {
   checkIsEmailDuplicate,
-  checkIsUserPresent
+  checkIsUserPresent,
+  newUserValidator
 }
