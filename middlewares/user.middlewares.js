@@ -2,6 +2,7 @@ const User = require('../dataBase/User.model')
 const ApiError = require('../error/ApiError')
 const {CURRENT_YEAR} = require("../constants/constants");
 const {userValidator} = require('../validators')
+const {authService} = require("../services");
 
 const checkIsEmailDuplicate = async (req, res, next) => {
   try{
@@ -44,12 +45,17 @@ const checkIsUserPresent = async (req, res, next) => {
 
 const newUserValidator = (req, res, next) => {
   try{
-    const {error} = userValidator.newUserJoiSchema.validate(req.body)
+    const {error, value} = userValidator.newUserJoiSchema.validate(req.body)
+
+    authService.validateToken('jhgjh')
 
     if (error) {
       next(new ApiError(error.details[0].message, 400))
       return
     }
+
+    req.body = value
+
     next()
   } catch (e) {
 
