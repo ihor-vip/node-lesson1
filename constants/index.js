@@ -1,4 +1,6 @@
 module.exports = {
   constants: require('./constants'),
-  userRolesEnum: require('./user-roles.enum')
+  emailActionsEnum: require('./email-actions.enum'),
+  tokenTypeEnum: require('./token-type.enum'),
+  userRolesEnum: require('./user-roles.enum'),
 }

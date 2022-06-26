@@ -1,8 +1,8 @@
 module.exports = {
   getReports: (req, res) => {
     res.json([
-      { April: 1500},
-      {May: 48000}
-    ])
+      { April: 15000 },
+      { May: 48000 }
+    ]);
   }
 }
