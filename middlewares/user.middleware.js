@@ -1,6 +1,7 @@
 const User = require('../dataBase/User.model');
 const ApiError = require('../error/ApiError');
 const { userValidator } = require('../validators');
+const { constants } = require('../constants');
 
 const checkIsEmailDuplicate = async (req, res, next) => {
   try {
@@ -66,8 +67,34 @@ const newUserValidator = (req, res, next) => {
   }
 }
 
+const checkUserAvatar = (req, res, next) => {
+  try {
+    if (!req.files || !req.files.avatar) {
+      next(new ApiError('No file', 400));
+      return;
+    }
+
+    const {size, mimetype} = req.files.avatar;
+
+    if (size > constants.IMAGE_MAX_SIZE) {
+      next(new ApiError(`Max file sile should be 5MB`, 400));
+      return;
+    }
+
+    if (!constants.IMAGE_MIMETYPES.includes(mimetype)) {
+      next(new ApiError(`Wrong file type`, 400));
+      return;
+    }
+
+    next();
+  } catch (e) {
+    next(e);
+  }
+}
+
 module.exports = {
   getUserDynamically,
   checkIsEmailDuplicate,
-  newUserValidator
+  newUserValidator,
+  checkUserAvatar
 }
