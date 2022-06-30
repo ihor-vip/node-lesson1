@@ -22,8 +22,8 @@ function generateTokenPair(encodeData = {}) {
   const refresh_token = jwt.sign(encodeData, REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
 
   return {
-    access_token, // yJhbGciOiJQUzUxMiIsI
-    refresh_token // Vtv6AzW6NRuEEkXwp
+    access_token,
+    refresh_token
   }
 }
 

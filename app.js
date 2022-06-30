@@ -1,14 +1,17 @@
-require('module-alias/register')
+require('module-alias/register');
 const express = require('express');
 const { engine } = require('express-handlebars');
-const fileUpload = require('express-fileupload')
+const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const swaggerUI = require('swagger-ui-express');
 
 dotenv.config();
 
 const { PORT, MONGO_URL, NODE_ENV } = require('./config/config');
+const cronRun = require('./cron-jobs');
 const { authRouter, reportRouter, userRouter } = require('./routes');
+const swaggerJson = require('./swagger.json');
 const ApiError = require('@error');
 
 const app = express();
@@ -22,19 +25,19 @@ app.set('views', './static');
 
 mongoose.connect(MONGO_URL).then(() => {
   console.log('Connection success')
-})
+});
 
-app.use(fileUpload({}))
+app.use(fileUpload({}));
 
 if (NODE_ENV === 'local') {
-  const morgan = require('morgan')
-  app.use(morgan('dev'))
+  const morgan = require('morgan');
+  app.use(morgan('dev'));
 }
-
 
 app.use('/auth', authRouter);
 app.use('/reports', reportRouter);
 app.use('/users', userRouter);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerJson));
 app.use('*', _notFoundHandler);
 
 app.use(_mainErrorHandler);
@@ -56,4 +59,6 @@ function _mainErrorHandler(err, req, res, next) {
 
 app.listen(PORT, () => {
   console.log(`App listen ${PORT}`);
+
+  cronRun();
 });

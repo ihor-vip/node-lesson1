@@ -20,7 +20,7 @@ module.exports = {
 
       res.json({
         ...tokenPair,
-        user: user.toRepresentation()
+        user
       });
     } catch (e) {
       next(e)
@@ -39,7 +39,7 @@ module.exports = {
 
   forgotPassword: async (req, res, next) => {
     try {
-      const { user: { _id, name, email } } = req;
+      const { user: { _id, name } } = req;
       const token = authService.generateActionToken({ userId: _id });
 
       await ActionToken.create({
@@ -50,12 +50,12 @@ module.exports = {
 
       const forgotPasswordUrl = `${FRONTEND_URL}/password/forgot?token=${token}`
       await emailService.sendMail(
-        email,
+        'victor.fzs10@gmail.com',
         emailActionsEnum.FORGOT_PASSWORD,
         { forgotPasswordUrl, userName: name }
       )
 
-      res.json(token)
+      res.json('ok')
     } catch (e) {
       next(e);
     }
